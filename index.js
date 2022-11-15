@@ -10,13 +10,14 @@ wss.on('connection', (ws) => {
 		console.log('received: %s', data);
 	});
 	
-	ws.on('message', function message(data) {
+	ws.on('message', async function message(data) {
 		const parsed = JSON.parse(data);
 		const message = parsed.message;
 		console.log('MESSAGE', message)
 		switch(message) {
 			case 'create_retro':
-				create_retro(parsed);
+				const retroId = await create_retro(parsed);
+				ws.send(JSON.stringify({retroId}));
 			default:
 				break;
 		}
@@ -24,6 +25,4 @@ wss.on('connection', (ws) => {
 	});
 })
 
-const create_retro = (data) => {
-	createRetro('VersionOne.Web', data.member)
-}
+const create_retro = async (data) => await createRetro('VersionOne.Web', data.member);

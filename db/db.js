@@ -10,10 +10,11 @@ export const createRetro = async (instanceID, member) => {
     try {
         await db.read()
         db.data = db.data || {}
+        const retroId = uuidv4();
         
         const createObj = {
             [instanceID]: {
-                [uuidv4()]: {
+                [retroId]: {
                     members: [member],
                     retro: {
                         columns: [
@@ -29,6 +30,7 @@ export const createRetro = async (instanceID, member) => {
         db.data = {...db.data, ...createObj}
         
         await db.write();
+        return retroId;
     } catch (err) {
         console.log('Error Create Retro: ', err)
     }
