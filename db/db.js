@@ -6,31 +6,44 @@ import { v4 as uuidv4 } from 'uuid';
 const adapter = new JSONFile('db.json')
 const db = new Low(adapter)
 
-export const createRetro = async (instanceID, member) => {
+export const create_retro = async (instanceId, member) => {
     try {
         await db.read()
-        db.data = db.data || {}
+        db.data = db.data || {[instanceId]: {}}
         const retroId = uuidv4();
         
-        const createObj = {
-            [instanceID]: {
-                [retroId]: {
-                    members: [member],
-                    retro: {
-                        columns: [
-                            {name: 'Mad', cards: []},
-                            {name: 'Sad', cards: []},
-                            {name: 'Glad', cards: []},
-                        ]
-                    }
-                }
+        const newRetroState = {
+            id: retroId,
+            members: [member],
+            retro: {
+                columns: [
+                    {name: 'Mad', items: []},
+                    {name: 'Sad', items: []},
+                    {name: 'Glad', items: []},
+                ]
             }
         }
         
-        db.data = {...db.data, ...createObj}
+        db.data[instanceId] = {
+            ...db.data[instanceId],
+            [retroId]: newRetroState
+        };
         
         await db.write();
-        return retroId;
+        return newRetroState;
+    } catch (err) {
+        console.log('Error Create Retro: ', err)
+    }
+}
+
+export const add_member = async (instanceId, retroId, member) => {
+    try {
+        await db.read()
+        
+        db.data[instanceId][retroId].members.push(member);
+        
+        await db.write();
+        return db.data[instanceId][retroId];
     } catch (err) {
         console.log('Error Create Retro: ', err)
     }
