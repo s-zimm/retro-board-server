@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js --ignore db/db.json",
+    "start": "nodemon index.js --ignore db.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "lowdb": "^5.0.5",
+    "uuid": "^9.0.0",
     "ws": "^8.11.0"
   },
   "devDependencies": {
