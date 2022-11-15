@@ -49,6 +49,21 @@ export const add_member = async (instanceId, retroId, member) => {
     }
 }
 
+export const add_card = async (instanceId, retroId, text, column) => {
+    try {
+        await db.read()
+        
+        const theCol = db.data[instanceId][retroId].retro.columns.find(col => col.name === column);
+        
+        theCol.items.push(text);
+        
+        await db.write();
+        return db.data[instanceId][retroId];
+    } catch (err) {
+        console.log('Error Create Retro: ', err)
+    }
+}
+
 export default db;
 
 // example lowdb use
