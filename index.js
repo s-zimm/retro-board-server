@@ -30,8 +30,8 @@ wss.on('connection', (ws) => {
 				break;
 			}
 			case 'add_card': {
-				const { text, column, retroId } = parsed;
-				const updatedRetroState = await add_card('VersionOne.Web', retroId, text, column);
+				const { card, column, retroId } = parsed;
+				const updatedRetroState = await add_card('VersionOne.Web', retroId, card, column);
 				updatedRetroState.members.forEach(member => lookup[member.socketId].send(JSON.stringify({message: 'retro_updated', retroState: updatedRetroState})));
 			}
 			default:

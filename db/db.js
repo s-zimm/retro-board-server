@@ -49,13 +49,13 @@ export const add_member = async (instanceId, retroId, member) => {
     }
 }
 
-export const add_card = async (instanceId, retroId, text, column) => {
+export const add_card = async (instanceId, retroId, card, column) => {
     try {
         await db.read()
         
         const theCol = db.data[instanceId][retroId].retro.columns.find(col => col.name === column);
         
-        theCol.items.push(text);
+        theCol.items.push(card);
         
         await db.write();
         return db.data[instanceId][retroId];
