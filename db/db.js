@@ -99,24 +99,3 @@ export const moveto_phase2 = async (instanceId, retroId) => {
 }
 
 export default db;
-
-// example lowdb use
-const ex = async () => {
-    // Read data from JSON file, this will set db.data content
-    await db.read()
-
-    // If db.json doesn't exist, db.data will be null
-    // Use the code below to set default data
-    // db.data = db.data || { posts: [] } // For Node < v15.x
-    db.data ||= { posts: [] }             // For Node >= 15.x
-
-    // Create and query items using native JS API
-    const firstPost = db.data.posts[0]
-
-    // Alternatively, you can also use this syntax if you prefer
-    const { posts } = db.data
-    posts.push('hello world')
-
-    // Finally write db.data content to file
-    await db.write()
-}
