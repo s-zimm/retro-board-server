@@ -87,13 +87,25 @@ export const moveto_phase2 = async (instanceId, retroId) => {
         newRetro.retro.items = newRetro.retro.columns
                                 .reduce((allCards, currentCol) =>
                                     allCards.concat(currentCol.items.map(item => ({...item, column: currentCol.name, top: 0, left: currentLeft += 50}))), [])
-        delete newRetro.retro.columns;
         newRetro.retro.phase = 2;
         
         await db.write();
         return newRetro;
     } catch (err) {
         console.log('Error moving to phase 2', err);
+    }
+}
+
+export const moveto_phase3 = async (instanceId, retroId) => {
+    try {
+        await db.read();
+        const newRetro =  db.data[instanceId][retroId];
+        newRetro.retro.phase = 3;
+        
+        await db.write();
+        return  newRetro;
+    } catch (err) {
+        console.log('Error moving to phase 3', err);
     }
 }
 
