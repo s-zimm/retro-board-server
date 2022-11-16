@@ -83,11 +83,12 @@ export const remove_card = async (instanceId, retroId, card, column) => {
 export const moveto_phase2 = async (instanceId, retroId) => {
     try {
         await db.read();
+        let currentLeft = 0;
         
         const newRetro = db.data[instanceId][retroId];
         newRetro.retro.items = newRetro.retro.columns
                                 .reduce((allCards, currentCol) =>
-                                    allCards.concat(currentCol.items.map(item => ({...item, column: currentCol.name}))), [])
+                                    allCards.concat(currentCol.items.map(item => ({...item, column: currentCol.name, top: 0, left: currentLeft += 50}))), [])
         delete newRetro.retro.columns;
         newRetro.retro.phase = 2;
         
@@ -95,6 +96,23 @@ export const moveto_phase2 = async (instanceId, retroId) => {
         return newRetro;
     } catch (err) {
         console.log('Error moving to phase 2', err);
+    }
+}
+
+export const update_item = async (instanceId, retroId, updatedItem) => {
+    try {
+        await db.read();
+        const retro = db.data[instanceId][retroId];
+        if (retro.retro.phase === 1) {
+            
+        } else if (retro.retro.phase === 2) {
+            const itemToUpdateIndex = retro.retro.items.findIndex(item => item.text === updatedItem.text);
+            retro.retro.items[itemToUpdateIndex] = updatedItem;
+        }
+        await db.write();
+        return retro;
+    } catch (err) {
+        console.log('Error updating item: ', updatedItem.text, err);
     }
 }
 
