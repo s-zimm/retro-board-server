@@ -6,7 +6,9 @@ import { v4 as uuidv4 } from 'uuid';
 const adapter = new JSONFile('db.json')
 const db = new Low(adapter)
 
-export const create_retro = async (instanceId, member) => {
+const DEFAULT_RETRO_FORMAT = [{name: 'Mad'}, {name: 'Sad'}, {name: 'Glad'}];
+
+export const create_retro = async (instanceId, member, retroFormat) => {
     try {
         await db.read()
         db.data = db.data || {[instanceId]: {}}
@@ -17,11 +19,7 @@ export const create_retro = async (instanceId, member) => {
             members: [member],
             retro: {
                 phase: 1,
-                columns: [
-                    {name: 'Mad', items: []},
-                    {name: 'Sad', items: []},
-                    {name: 'Glad', items: []},
-                ]
+                columns: (retroFormat || DEFAULT_RETRO_FORMAT).map(column => ({...column, items : []}))
             }
         }
         
@@ -97,5 +95,17 @@ export const moveto_phase2 = async (instanceId, retroId) => {
         console.log('Error moving to phase 2', err);
     }
 }
+
+export const get_retroIDs = async (instanceId) => {
+    try {
+        await db.read()
+        
+        const retroIDs = Object.keys(db.data[instanceId] || []) || [];
+        return retroIDs;
+    } catch (err) {
+        console.log('Error Get Retro: ', err)
+    }
+}
+
 
 export default db;
