@@ -64,6 +64,21 @@ export const add_card = async (instanceId, retroId, card, column) => {
     }
 }
 
+export const remove_card = async (instanceId, retroId, card, column) => {
+    try {
+        await db.read()
+        
+        const theCol = db.data[instanceId][retroId].retro.columns.find(col => col.name === column);
+        const newItems = theCol.items.filter(item => card.text !== item.text);
+        theCol.items = newItems;
+        
+        await db.write();
+        return db.data[instanceId][retroId];
+    } catch (err) {
+        console.log('Error Create Retro: ', err)
+    }
+}
+
 export default db;
 
 // example lowdb use
