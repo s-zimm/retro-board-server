@@ -1,6 +1,6 @@
 import db from './db/db.js';
 import { WebSocketServer } from 'ws';
-import { create_retro, add_member, add_card, remove_card, moveto_phase2, update_item, get_retroIDs, moveto_phase3 } from './db/db.js';
+import { create_retro, add_member, add_card, remove_card, moveto_phase2, update_item, get_retroIDs, moveto_phase3, close_retro } from './db/db.js';
 
 const wss = new WebSocketServer({port: '7777'});
 
@@ -57,6 +57,12 @@ wss.on('connection', async (ws) => {
 				const { retroId, item } = parsed;
 				const updatedRetroState = await update_item('VersionOne.Web', retroId, item);
 				updatedRetroState.members.forEach(member => lookup[member.socketId].send(JSON.stringify({message: 'retro_updated', retroState: updatedRetroState})));
+				break;
+			}
+			case 'close_retro': {
+				const { retroId, agilityRetroUrl } = parsed;
+				const members = await close_retro('VersionOne.Web', retroId);
+				members.forEach(member => lookup[member.socketId].send(JSON.stringify({message: 'retro_closed', agilityRetroUrl})));
 				break;
 			}
 			default:

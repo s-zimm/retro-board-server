@@ -137,4 +137,16 @@ export const get_retroIDs = async (instanceId) => {
     }
 }
 
+export const close_retro = async (instanceId, retroId) => {
+    try {
+        await db.read()
+        const members = [...db.data[instanceId][retroId].members];
+        delete db.data[instanceId][retroId];
+        await db.write();
+        return members;
+    } catch (err) {
+        console.log('Error closing retro: ', err)
+    }
+}
+
 export default db;
