@@ -16,6 +16,7 @@ export const create_retro = async (instanceId, member) => {
             id: retroId,
             members: [member],
             retro: {
+                phase: 1,
                 columns: [
                     {name: 'Mad', items: []},
                     {name: 'Sad', items: []},
@@ -76,6 +77,24 @@ export const remove_card = async (instanceId, retroId, card, column) => {
         return db.data[instanceId][retroId];
     } catch (err) {
         console.log('Error Create Retro: ', err)
+    }
+}
+
+export const moveto_phase2 = async (instanceId, retroId) => {
+    try {
+        await db.read();
+        
+        const newRetro = db.data[instanceId][retroId];
+        newRetro.retro.items = newRetro.retro.columns
+                                .reduce((allCards, currentCol) =>
+                                    allCards.concat(currentCol.items.map(item => ({...item, column: currentCol.name}))), [])
+        delete newRetro.retro.columns;
+        newRetro.retro.phase = 2;
+        
+        await db.write();
+        return newRetro;
+    } catch (err) {
+        console.log('Error moving to phase 2', err);
     }
 }
 
