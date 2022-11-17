@@ -7,7 +7,7 @@ const server = createServer((req, res) => {
 	res.writeHead(405)
 	res.end()
 })
-server.listen(7777, (req, res) => {console.log('listening on 7777')})
+server.listen(process.env.PORT || 7777, (req, res) => {console.log('listening')})
 const wss = new WebSocketServer({server,})
 
 let id = 0;
