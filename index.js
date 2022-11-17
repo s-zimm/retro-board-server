@@ -1,14 +1,21 @@
 import db from './db/db.js';
+import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { create_retro, add_member, add_card, remove_card, moveto_phase2, update_item, get_retroIDs, moveto_phase3, close_retro } from './db/db.js';
 
-const wss = new WebSocketServer({port: '7777'});
+const server = createServer((req, res) => {
+	res.writeHead(405)
+	res.end()
+})
+server.listen(7777, (req, res) => {console.log('listening on 7777')})
+const wss = new WebSocketServer({server,})
 
 let id = 0;
 const lookup = {}
 
-wss.on('connection', async (ws) => {
+wss.on('connection', async (ws, req) => {
 	console.log('connected!')
+	const INSTANCE_ID = req.rawHeaders[13]+'/'
 	ws.id = id++;
 	lookup[ws.id] = ws;
 	ws.send(JSON.stringify({ message: 'connected', socketId: ws.id, retroIds: await get_retroIDs(INSTANCE_ID) || []}));
