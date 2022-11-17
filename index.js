@@ -63,7 +63,8 @@ wss.on('connection', async (ws) => {
 			case 'close_retro': {
 				const { retroId, agilityRetroUrl } = parsed;
 				const members = await close_retro('VersionOne.Web', retroId);
-				members.forEach(member => lookup[member.socketId].send(JSON.stringify({message: 'retro_closed', agilityRetroUrl})));
+				const openRetros = await get_retroIDs('VersionOne.Web') || []
+				members.forEach(member => lookup[member.socketId].send(JSON.stringify({message: 'retro_closed', agilityRetroUrl, retroIds: openRetros})));
 				break;
 			}
 			default:
