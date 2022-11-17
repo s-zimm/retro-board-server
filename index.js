@@ -11,7 +11,7 @@ wss.on('connection', async (ws) => {
 	console.log('connected!')
 	ws.id = id++;
 	lookup[ws.id] = ws;
-	ws.send(JSON.stringify({ message: 'connected', socketId: ws.id, retroIds: await get_retroIDs('VersionOne.Web')}));
+	ws.send(JSON.stringify({ message: 'connected', socketId: ws.id, retroIds: await get_retroIDs('VersionOne.Web') || []}));
 	
 	ws.on('message', async function message(data) {
 		const parsed = JSON.parse(data);
@@ -19,7 +19,8 @@ wss.on('connection', async (ws) => {
 		console.log('MESSAGE', message)
 		switch(message) {
 			case 'create_retro': {
-				const retroState = await create_retro('VersionOne.Web', parsed.member);
+				const { member, retroFormat, retroTitle } = parsed;
+				const retroState = await create_retro('VersionOne.Web', member, JSON.parse(retroFormat), retroTitle);
 				ws.send(JSON.stringify({message: 'retro_created', retroState}));
 				break;
 			}

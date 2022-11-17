@@ -8,7 +8,7 @@ const db = new Low(adapter)
 
 const DEFAULT_RETRO_FORMAT = [{name: 'Mad'}, {name: 'Sad'}, {name: 'Glad'}];
 
-export const create_retro = async (instanceId, member, retroFormat) => {
+export const create_retro = async (instanceId, member, retroFormat, retroTitle) => {
     try {
         await db.read()
         db.data = db.data || {[instanceId]: {}}
@@ -19,7 +19,8 @@ export const create_retro = async (instanceId, member, retroFormat) => {
             members: [member],
             retro: {
                 phase: 1,
-                columns: (retroFormat || DEFAULT_RETRO_FORMAT).map(column => ({...column, items : []}))
+                columns: (retroFormat || DEFAULT_RETRO_FORMAT).map(column => ({name: column, items : []})),
+                name: retroTitle,
             }
         }
         
@@ -129,9 +130,11 @@ export const update_item = async (instanceId, retroId, updatedItem) => {
 export const get_retroIDs = async (instanceId) => {
     try {
         await db.read()
-        
-        const retroIDs = Object.keys(db.data[instanceId] || []) || [];
-        return retroIDs;
+
+        const openRetros = Object.keys(db.data[instanceId] || {});
+        console.log(openRetros)
+        const retros = openRetros.map(retroById => ({ID: db.data[instanceId][retroById].id, name: db.data[instanceId][retroById].retro.name})) || []
+        return retros;
     } catch (err) {
         console.log('Error Get Retro: ', err)
     }
